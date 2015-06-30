@@ -5,6 +5,8 @@ from datasets import baseline_logic
 from operator import add as logical_or, mul as logical_and
 import unittest
 
+__author__ = 'lejlot'
+
 class TestSimpleLogicWithSklearnSVM(unittest.TestCase):
     """
     Tets whether sklearn SVM behaves identically using its
@@ -15,14 +17,14 @@ class TestSimpleLogicWithSklearnSVM(unittest.TestCase):
     def setUp(self):
         self.datasets = [baseline_logic(operator) for operator in
                         (logical_or, logical_and)]
-        self.models = [(SVC(kernel=Linear(), C=1000), 
+        self.models = [(SVC(kernel=Linear(), C=1000),
                         SVC(kernel='linear', C=1000)),
 
-                       (SVC(kernel=Polynomial(bias=1, degree=2), C=1000), 
+                       (SVC(kernel=Polynomial(bias=1, degree=2), C=1000),
                         SVC(kernel='poly', C=1000, coef0=1, degree=2)),
 
-                       (SVC(kernel=RBF(), C=1000), 
-                        SVC(kernel='rbf', C=1000)),]
+                       (SVC(kernel=RBF(), C=1000),
+                        SVC(kernel='rbf', C=1000))]
 
     def tearDown(self):
         pass
