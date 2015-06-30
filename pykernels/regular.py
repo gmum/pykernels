@@ -75,7 +75,7 @@ class RationalQuadratic(Kernel):
         norms_1 = (data_1 ** 2).sum(axis=1)
         norms_2 = (data_2 ** 2).sum(axis=1)
 
-        dists_sq = norms_1.reshape(-1, 1) + norms_2 - 2 * np.dot(data_1, data_2.T)
+        dists_sq = np.abs(norms_1.reshape(-1, 1) + norms_2 - 2 * np.dot(data_1, data_2.T))
 
         return 1. - (dists_sq / (dists_sq + self._c))
 
@@ -101,7 +101,7 @@ class InverseMultiquadratic(Kernel):
         norms_1 = (data_1 ** 2).sum(axis=1)
         norms_2 = (data_2 ** 2).sum(axis=1)
 
-        dists_sq = norms_1.reshape(-1, 1) + norms_2 - 2 * np.dot(data_1, data_2.T)
+        dists_sq = np.abs(norms_1.reshape(-1, 1) + norms_2 - 2 * np.dot(data_1, data_2.T))
 
         return 1. / np.sqrt(dists_sq + self._c)
 
@@ -139,3 +139,31 @@ class Cauchy(Kernel):
 
     def dim(self):
         return np.inf
+
+
+
+class TStudent(Kernel):
+    """
+    T-Student kernel, 
+
+        K(x, y) = 1 / (1 + ||x - y||^d)
+
+    where:
+        d = degree
+    """
+
+    def __init__(self, degree=2):
+        self._d = degree
+
+    def _compute(self, data_1, data_2):
+
+        norms_1 = (data_1 ** 2).sum(axis=1)
+        norms_2 = (data_2 ** 2).sum(axis=1)
+
+        dists = np.sqrt(np.abs(norms_1.reshape(-1, 1) + norms_2 - 2 * np.dot(data_1, data_2.T)))
+
+        return 1 / (1 + dists ** self._d)
+
+    def dim(self):
+        return None
+
