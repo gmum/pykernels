@@ -7,6 +7,7 @@ __author__ = 'lejlot'
 
 from pykernels.base import Kernel
 import numpy as np
+from utils import euclidean_dist_matrix
 
 class Linear(Kernel):
     """
@@ -69,11 +70,7 @@ class RBF(Kernel):
             # libSVM heuristics
             self._gamma = 1./data_1.shape[1]
 
-        norms_1 = (data_1 ** 2).sum(axis=1)
-        norms_2 = (data_2 ** 2).sum(axis=1)
-
-        dists_sq = norms_1.reshape(-1, 1) + norms_2 - 2 * np.dot(data_1, data_2.T)
-
+        dists_sq = euclidean_dist_matrix(data_1, data_2)
         return np.exp(-self._gamma * dists_sq)
 
     def dim(self):

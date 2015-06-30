@@ -7,7 +7,7 @@ __author__ = 'lejlot'
 
 from pykernels.base import Kernel
 import numpy as np
-
+from utils import euclidean_dist_matrix
 
 
 class Exponential(Kernel):
@@ -31,11 +31,7 @@ class Exponential(Kernel):
             # modification of libSVM heuristics
             self._sigma = float(data_1.shape[1])
 
-        norms_1 = (data_1 ** 2).sum(axis=1)
-        norms_2 = (data_2 ** 2).sum(axis=1)
-
-        dists_sq = np.abs(norms_1.reshape(-1, 1) + norms_2 - 2 * np.dot(data_1, data_2.T))
-
+        dists_sq = euclidean_dist_matrix(data_1, data_2)
         return np.exp(-np.sqrt(dists_sq) / self._sigma)
 
     def dim(self):
@@ -72,11 +68,7 @@ class RationalQuadratic(Kernel):
 
     def _compute(self, data_1, data_2):
         
-        norms_1 = (data_1 ** 2).sum(axis=1)
-        norms_2 = (data_2 ** 2).sum(axis=1)
-
-        dists_sq = np.abs(norms_1.reshape(-1, 1) + norms_2 - 2 * np.dot(data_1, data_2.T))
-
+        dists_sq = euclidean_dist_matrix(data_1, data_2)
         return 1. - (dists_sq / (dists_sq + self._c))
 
     def dim(self):
@@ -98,11 +90,7 @@ class InverseMultiquadratic(Kernel):
 
     def _compute(self, data_1, data_2):
         
-        norms_1 = (data_1 ** 2).sum(axis=1)
-        norms_2 = (data_2 ** 2).sum(axis=1)
-
-        dists_sq = np.abs(norms_1.reshape(-1, 1) + norms_2 - 2 * np.dot(data_1, data_2.T))
-
+        dists_sq = euclidean_dist_matrix(data_1, data_2)
         return 1. / np.sqrt(dists_sq + self._c)
 
     def dim(self):
@@ -130,10 +118,7 @@ class Cauchy(Kernel):
             # modification of libSVM heuristics
             self._sigma = float(data_1.shape[1])
 
-        norms_1 = (data_1 ** 2).sum(axis=1)
-        norms_2 = (data_2 ** 2).sum(axis=1)
-
-        dists_sq = np.abs(norms_1.reshape(-1, 1) + norms_2 - 2 * np.dot(data_1, data_2.T))
+        dists_sq = euclidean_dist_matrix(data_1, data_2)
 
         return np.exp(-np.sqrt(dists_sq) / self._sigma)
 
@@ -157,11 +142,7 @@ class TStudent(Kernel):
 
     def _compute(self, data_1, data_2):
 
-        norms_1 = (data_1 ** 2).sum(axis=1)
-        norms_2 = (data_2 ** 2).sum(axis=1)
-
-        dists = np.sqrt(np.abs(norms_1.reshape(-1, 1) + norms_2 - 2 * np.dot(data_1, data_2.T)))
-
+        dists = np.sqrt(euclidean_dist_matrix(data_1, data_2))
         return 1 / (1 + dists ** self._d)
 
     def dim(self):
