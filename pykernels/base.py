@@ -4,12 +4,13 @@ Base classes and methods used by all kernels
 
 __author__ = 'lejlot'
 
-from abc import abstractmethod
+from abc import abstractmethod, ABCMeta
 
 class Kernel(object):
     """
     Base, abstract kernel class
     """
+    __metaclass__ = ABCMeta
 
     def __call__(self, data_1, data_2):
         return self._compute(data_1, data_2)
@@ -41,3 +42,11 @@ class Kernel(object):
 
     def __repr__(self):
         return str(self)
+
+
+
+class GraphKernel(Kernel):
+    """
+    Base, abstract GraphKernel kernel class
+    """
+    pass

@@ -7,9 +7,12 @@ __author__ = 'lejlot'
 import numpy as np
 from pykernels.basic import Linear, Polynomial, RBF
 from pykernels.regular import *
-from pykernels.base import Kernel
+from pykernels.randomwalk import *
+from pykernels.base import Kernel, GraphKernel
 import unittest
 from scipy import linalg as la
+import inspect
+from basic_graph import Graph
 
 def find_all_children(parent_class):
     """
@@ -34,11 +37,22 @@ class TestPositiveDefinitness(unittest.TestCase):
     """
 
     def setUp(self):
-        np.random.seed(0)
-        self.X = [np.random.randn(100, 20), np.random.randn(500, 2),
-                  np.random.randn(10, 100), np.random.rand(100, 20),
-                  np.random.rand(500, 100), np.random.rand(3, 1000)]
         self.tol = 1e-8
+
+    def get_data(self, kernel):
+        """
+        Prepares set of datasets for a particular kernel
+        """
+
+        np.random.seed(0)
+
+        if GraphKernel in kernel.__mro__:
+            return [[Graph(np.array([[1,1],[1,1]]))],
+                   [Graph(np.array([[0,0],[0,0]]))]]
+        else:
+            return [np.random.randn(100, 20), np.random.randn(500, 2),
+                   np.random.randn(10, 100), np.random.rand(100, 20),
+                   np.random.rand(500, 100), np.random.rand(3, 1000)]
 
     def tearDown(self):
         pass
@@ -46,9 +60,10 @@ class TestPositiveDefinitness(unittest.TestCase):
     def testPSD(self):
         kernels = find_all_children(Kernel)
         for kernel, _ in kernels:
-            for data in self.X:
-                eigens, _ = la.eigh(kernel().gram(data))
-                self.assertTrue(np.all(eigens > -self.tol))
+            if not inspect.isabstract(kernel): # ignore abstract classes
+                for data in self.get_data(kernel):
+                    eigens, _ = la.eigh(kernel().gram(data))
+                    self.assertTrue(np.all(eigens > -self.tol))
 
 if __name__ == '__main__':
     unittest.main(verbosity=3)

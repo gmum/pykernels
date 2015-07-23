@@ -111,7 +111,7 @@ class Cauchy(Kernel):
         if sigma is None:
             self._sigma = None
         else:
-            self._sigma = 2 * sigma**2
+            self._sigma = sigma**2
 
     def _compute(self, data_1, data_2):
         if self._sigma is None:
@@ -120,7 +120,7 @@ class Cauchy(Kernel):
 
         dists_sq = euclidean_dist_matrix(data_1, data_2)
 
-        return np.exp(-np.sqrt(dists_sq) / self._sigma)
+        return 1 / (1 + dists_sq / self._sigma)
 
     def dim(self):
         return np.inf
