@@ -20,4 +20,4 @@ install:
   - conda install --yes python=$TRAVIS_PYTHON_VERSION atlas numpy scipy scikit-learn
 
 script: 
-  - python tests/basic.py
+  - python -m unittest discover -s tests -p '*py' -v
