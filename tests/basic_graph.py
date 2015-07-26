@@ -1,5 +1,4 @@
-from pykernels.base import Kernel
-from pykernels.base_graph import GraphKernel
+from pykernels.base import Kernel, GraphKernel
 
 class Graph(object):
     """
