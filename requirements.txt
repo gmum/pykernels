@@ -1,3 +1,4 @@
+atlas
 numpy>=1.8.1
 scipy>=0.14.0
 scikit-learn>=0.16.0
