@@ -1,6 +1,6 @@
 # pyKernels
 * authors: Wojciech Marian Czarnecki and Katarzyna Janocha
-* version: 0.0.1
+* version: 0.0.2
 * dependencies: numpy, scipy, scikit-learn
 
 ## General description
