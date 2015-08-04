@@ -47,8 +47,16 @@ class TestPositiveDefinitness(unittest.TestCase):
         np.random.seed(0)
 
         if GraphKernel in kernel.__mro__:
-            return [[Graph(np.array([[1,1],[1,1]]))],
-                   [Graph(np.array([[0,0],[0,0]]))]]
+            return [[Graph(np.array([[ 1, 1], [ 1, 1]]))],
+                   [Graph(np.array([[ 1, 0],[ 0, 1]]))],
+                   [Graph(np.array([[ 1, 1, 0, 0],
+                                    [ 1, 1, 0, 1],
+                                    [ 0, 0, 1, 0],
+                                    [ 0, 1, 0, 1]]))],
+                   [Graph(np.array([[ 1, 0, 0, 1],
+                                    [ 0, 1, 0, 0],
+                                    [ 0, 0, 1, 0],
+                                    [ 1, 0, 0, 1]]))]]
         else:
             return [np.random.randn(100, 20), np.random.randn(500, 2),
                    np.random.randn(10, 100), np.random.rand(100, 20),

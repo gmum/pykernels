@@ -6,7 +6,6 @@ __author__ = 'kasiajanocha'
 
 import numpy as np
 from pykernels.base import Kernel, GraphKernel
-from scipy.sparse import linalg
 
 class RandomWalk(GraphKernel):
     """
@@ -19,18 +18,48 @@ class RandomWalk(GraphKernel):
         self._tolerance = tolerance
         self._max_iter = maxiter
 
+    def _norm(self, am):
+        norm = am.sum(axis=0)
+        norm[norm==0] = 1
+        return am / norm
+
+    # arguments: either tensor of dimention 3 (list of adjacency matrices)
+    # of an object with am filed as adjacency matrix
+    # and optionally: p, q as starting and stopping probabilities
     def _compute(self, data_1, data_2):
         res = np.zeros((len(data_1), len(data_2)))
+        is_tensor = False
+        try:
+            if data_1.ndim == 3:
+                is_tensor = True
+        except Exception, e:
+            pass
         for i, g1 in enumerate(data_1):
             for j, g2 in enumerate(data_2):
+                # a1, a2 - normalized adjacency matrixes
+                # p, q - starting and stopping probabilities
+                if is_tensor:
+                    a1 = self._norm(g1)
+                    a2 = self._norm(g2)
+                else:
+                    a1 = self._norm(g1.am)
+                    a2 = self._norm(g2.am)
+                    try:
+                        p = np.kron(g1.p, g2.p)
+                    except Exception, e:
+                        pass
+                    try:
+                        p = np.kron(g1.q, g2.q)
+                    except Exception, e:
+                        pass
+                # if graph is unweighted, W_prod = kron(a_norm(g1)*a_norm(g2))
+                W_prod = np.kron(a1, a2)
+                p = np.ones(W_prod.shape[0]) / (W_prod.shape[0])
+                q = p
                 # first solve (I - lambda * W_prod) * x = p_prod
-                a1 = g1.am / g1.am.sum(axis=0)
-                a2 = g2.am / g2.am.sum(axis=0)
-                kron = np.kron(a1, a2)
-                A =  np.identity(kron.shape[0]) - kron
-                p = np.ones((a1.shape[0] * a2.shape[0], 1)) / (a1.shape[0] * a2.shape[0])
-                x = linalg.cg(A, p, tol=self._tolerance, maxiter=self._max_iter)
-                res[i, j] += np.sum(x[0])
+                A =  np.identity(W_prod.shape[0]) - (W_prod * self._lmb)
+                x = np.linalg.lstsq(A, p)
+                res[i, j] = q.T.dot(x[0])
         return res
 
     def dim(self):
