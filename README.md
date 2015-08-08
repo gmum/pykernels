@@ -31,3 +31,9 @@ for binary sequences and even kernels for labeled graphs.
         print 'Accuracy:', accuracy_score(clf.predict(X), y)
         print
 
+## Bibliography
+[1] S. V. N. Vishwanathan, N. N. Schraudolph, I. R. Kondor, and K. M. Borgwardt. 
+    Graph kernels. Journal of Machine Learning Research, 11:1201-1242, 2010.
+[2] N. Shervashidze, S. V. N. Vishwanathan, T. Petri, K. Mehlhorn, and K. M. Borgwardt. 
+    Efficient graphlet kernels for large graph comparison. In Proceedings of the International 
+    Conference on Artificial Intelligence and Statistics, 2009.
