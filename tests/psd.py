@@ -7,7 +7,7 @@ __author__ = 'lejlot'
 import numpy as np
 from pykernels.basic import Linear, Polynomial, RBF
 from pykernels.regular import *
-from pykernels.randomwalk import *
+from pykernels.graph.randomwalk import *
 from pykernels.base import Kernel, GraphKernel
 import unittest
 from scipy import linalg as la
