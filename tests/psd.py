@@ -12,7 +12,7 @@ from pykernels.base import Kernel, GraphKernel
 import unittest
 from scipy import linalg as la
 import inspect
-from basic_graph import Graph
+from pykernels.graph.basic_graph import Graph
 
 def find_all_children(parent_class):
     """
