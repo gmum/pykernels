@@ -7,12 +7,12 @@ __author__ = 'lejlot'
 import numpy as np
 from pykernels.basic import Linear, Polynomial, RBF
 from pykernels.regular import *
-from pykernels.graph.randomwalk import *
+from pykernels.graph.randomwalk import RandomWalk
+from pykernels.graph.allgraphlets import All34Graphlets
 from pykernels.base import Kernel, GraphKernel
 import unittest
 from scipy import linalg as la
 import inspect
-from pykernels.graph.basic_graph import Graph
 
 def find_all_children(parent_class):
     """
@@ -46,17 +46,28 @@ class TestPositiveDefinitness(unittest.TestCase):
 
         np.random.seed(0)
 
-        if GraphKernel in kernel.__mro__:
-            return [[Graph(np.array([[ 1, 1], [ 1, 1]]))],
-                   [Graph(np.array([[ 1, 0],[ 0, 1]]))],
-                   [Graph(np.array([[ 1, 1, 0, 0],
-                                    [ 1, 1, 0, 1],
-                                    [ 0, 0, 1, 0],
-                                    [ 0, 1, 0, 1]]))],
-                   [Graph(np.array([[ 1, 0, 0, 1],
-                                    [ 0, 1, 0, 0],
-                                    [ 0, 0, 1, 0],
-                                    [ 1, 0, 0, 1]]))]]
+        if kernel is All34Graphlets:
+            return [[np.array([[ 1, 1, 0, 0],
+                               [ 1, 1, 0, 1],
+                               [ 0, 0, 1, 0],
+                               [ 0, 1, 0, 1]])],
+                    [np.array([[ 1, 0, 0, 1],
+                               [ 0, 1, 0, 0],
+                               [ 0, 0, 1, 0],
+                               [ 1, 0, 0, 1]])]]
+
+        elif GraphKernel in kernel.__mro__:
+            return [[np.array([[ 1, 1], [ 1, 1]])],
+                    [np.array([[ 1, 0],[ 0, 1]])],
+                    [np.array([[ 1, 1, 0, 0],
+                               [ 1, 1, 0, 1],
+                               [ 0, 0, 1, 0],
+                               [ 0, 1, 0, 1]])],
+                    [np.array([[ 1, 0, 0, 1],
+                               [ 0, 1, 0, 0],
+                               [ 0, 0, 1, 0],
+                               [ 1, 0, 0, 1]])]]
+
         else:
             return [np.random.randn(100, 20), np.random.randn(500, 2),
                    np.random.randn(10, 100), np.random.rand(100, 20),

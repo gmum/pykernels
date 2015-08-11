@@ -95,20 +95,9 @@ class All34Graphlets(GraphKernel):
         else:
             self.graphlet_array = GraphletKernelUtils._generate_graphlets(k, self._3_graphlets)
 
-    def _extract_adjacency_matrix(self, data_1):
-        try:
-            if data_1.ndim == 3:
-                return np.array(data_1)
-        except Exception, e:
-            try:
-                return np.array([G.am for G in data_1])
-            except Exception, e:
-                return np.array(data_1)
-
     def _compute(self, data_1, data_2):      
-        data_1 = self._extract_adjacency_matrix(data_1)
-        data_2 = self._extract_adjacency_matrix(data_2)
-        # print data_1.shape
+        data_1 = np.array(data_1)
+        data_2 = np.array(data_2)
         d1 = np.zeros((data_1.shape[0], GraphletKernelUtils._number_of_graphlets(self.k)))
         d2 = np.zeros((data_2.shape[0], GraphletKernelUtils._number_of_graphlets(self.k)))
         for i, g in enumerate(data_1):

@@ -28,30 +28,12 @@ class RandomWalk(GraphKernel):
     # and optionally: p, q as starting and stopping probabilities
     def _compute(self, data_1, data_2):
         res = np.zeros((len(data_1), len(data_2)))
-        is_tensor = False
-        try:
-            if data_1.ndim == 3:
-                is_tensor = True
-        except Exception, e:
-            pass
         for i, g1 in enumerate(data_1):
             for j, g2 in enumerate(data_2):
                 # a1, a2 - normalized adjacency matrixes
                 # p, q - starting and stopping probabilities
-                if is_tensor:
-                    a1 = self._norm(g1)
-                    a2 = self._norm(g2)
-                else:
-                    a1 = self._norm(g1.am)
-                    a2 = self._norm(g2.am)
-                    try:
-                        p = np.kron(g1.p, g2.p)
-                    except Exception, e:
-                        pass
-                    try:
-                        p = np.kron(g1.q, g2.q)
-                    except Exception, e:
-                        pass
+                a1 = self._norm(g1)
+                a2 = self._norm(g2)
                 # if graph is unweighted, W_prod = kron(a_norm(g1)*a_norm(g2))
                 W_prod = np.kron(a1, a2)
                 p = np.ones(W_prod.shape[0]) / (W_prod.shape[0])
