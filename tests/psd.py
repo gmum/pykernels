@@ -9,6 +9,7 @@ from pykernels.basic import Linear, Polynomial, RBF
 from pykernels.regular import *
 from pykernels.graph.randomwalk import RandomWalk
 from pykernels.graph.allgraphlets import All34Graphlets
+from pykernels.graph.shortestpath import ShortestPath
 from pykernels.base import Kernel, GraphKernel
 import unittest
 from scipy import linalg as la

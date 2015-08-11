@@ -75,7 +75,7 @@ class GraphletKernelUtils(object):
             graphlet = am[subset,:][:,subset]
             res[0][GraphletKernelUtils._graphlet_index(graphlet, graphlet_array)] += 1
         # print "returning ", res / sum(sum(res))
-        return (res / sum(sum(res)))
+        return (res / res.sum())
 
 class All34Graphlets(GraphKernel):
     """

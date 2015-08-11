@@ -1,6 +1,8 @@
 import numpy as np
 from pykernels.base import Kernel, GraphKernel
 
+__author__ = 'kasiajanocha'
+
 def floyd_warshall(am, w):
     """
     Returns matrix of shortest path weights.
@@ -10,9 +12,9 @@ def floyd_warshall(am, w):
     res = res + ((am != 0)*w)
     res[res==0] = np.inf
     np.fill_diagonal(res, 0)
-    for i in xrange(0,N):
-        for j in xrange(0,N):
-            for k in xrange(0,N):
+    for i in xrange(N):
+        for j in xrange(N):
+            for k in xrange(N):
                 if res[i,j] + res[j,k] < res[i,k]:
                     res[i,k] = res[i,j] + res[j,k]
     return res

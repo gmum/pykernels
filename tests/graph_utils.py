@@ -1,6 +1,6 @@
 import numpy as np
 import unittest
-from pykernels.graph.shortest_path import floyd_warshall
+from pykernels.graph.shortestpath import floyd_warshall
 from pykernels.graph.allgraphlets import GraphletKernelUtils
 
 class TestFloydWarshall(unittest.TestCase):

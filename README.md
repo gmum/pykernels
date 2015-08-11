@@ -40,3 +40,5 @@ for binary sequences and even kernels for labeled graphs.
 [3] K. M. Borgwardt and H.-P. Kriegel.
     Shortest-path kernels on graphs. In Proceedings of the International Conference on Data Mining, 
     pages 74-81, 2005.
+[4] N. Shervashidze, K. Borgwardt
+    Graph kernels. Code and Data, 2012.
