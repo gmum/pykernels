@@ -95,7 +95,7 @@ class All34Graphlets(GraphKernel):
         else:
             self.graphlet_array = GraphletKernelUtils._generate_graphlets(k, self._3_graphlets)
 
-    def _compute(self, data_1, data_2):      
+    def _compute(self, data_1, data_2):
         data_1 = np.array(data_1)
         data_2 = np.array(data_2)
         d1 = np.zeros((data_1.shape[0], GraphletKernelUtils._number_of_graphlets(self.k)))

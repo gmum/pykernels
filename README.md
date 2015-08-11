@@ -37,3 +37,6 @@ for binary sequences and even kernels for labeled graphs.
 [2] N. Shervashidze, S. V. N. Vishwanathan, T. Petri, K. Mehlhorn, and K. M. Borgwardt. 
     Efficient graphlet kernels for large graph comparison. In Proceedings of the International 
     Conference on Artificial Intelligence and Statistics, 2009.
+[3] K. M. Borgwardt and H.-P. Kriegel.
+    Shortest-path kernels on graphs. In Proceedings of the International Conference on Data Mining, 
+    pages 74-81, 2005.
