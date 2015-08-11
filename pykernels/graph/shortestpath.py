@@ -19,7 +19,7 @@ def floyd_warshall(am, w):
 
 class ShortestPath(GraphKernel):
     """
-    Sortest Ppath kernel [3]
+    Shortest Path kernel [3]
     """
     def __init__(self):
         pass
@@ -32,11 +32,12 @@ class ShortestPath(GraphKernel):
         return res
 
     def _create_accum_list(self, I, SP, maxpath):
-        res = np.zeros((SP.shape[0], maxpath))
+        res = np.zeros((SP.shape[0], maxpath+1))
         for i, s in enumerate(SP):
             ind = s[I[i]]
             accum = np.zeros(maxpath+1)
             accum[:ind.max()+1] += np.bincount(ind.astype(int))
+            res[i] = accum
         return res
 
     def _compute(self, data_1, data_2):
