@@ -16,7 +16,7 @@ class TestFloydWarshall(unittest.TestCase):
     def tearDown(self):
         pass
 
-    def test_fw(self):
+    def testFloydWarshall(self):
         for i, g in enumerate(self.datasets):
             self.assertTrue((floyd_warshall(g,g) == self.results[i]).all())
 
@@ -36,11 +36,11 @@ class TestGraphletCreation(unittest.TestCase):
                 return False
         return True
 
-    def test_three(self):
+    def test3GraphletsCreation(self):
         gr3 = GraphletKernelUtils._generate_graphlets(3, None)
         self.assertTrue(gr3.shape[0] == 4)
         self.assertTrue(self._contains_values(self.all_3_graphlets, gr3))
 
-    def test_four(self):
+    def test4GraphletsCreation(self):
         gr4 = GraphletKernelUtils._generate_graphlets(4, self.all_3_graphlets)
         self.assertTrue(gr4.shape[0] == 11)
