@@ -3,6 +3,27 @@ import unittest
 from pykernels.graph.shortestpath import floyd_warshall
 from pykernels.graph.allgraphlets import GraphletKernelUtils
 
+__author__ = 'kasiajanocha'
+
+"""
+Tests for shared graph util functions such as Floyd Warshall computation or graphlet creation
+together with shared test methods.
+"""
+
+def generate_testdata():
+    tdata =  [[np.genfromtxt('tests/data/random_10_node.csv',delimiter=',').reshape(10,10)],
+              [np.genfromtxt('tests/data/random_100_node.csv',delimiter=',').reshape(100,100)],
+              np.genfromtxt('tests/data/8_4x4_ams.csv',delimiter=',').reshape(8,4,4),
+              np.genfromtxt('tests/data/8_100x100_ams.csv',delimiter=',').reshape(8,100,100)]
+    return np.array(tdata)
+
+def generate_testanswers(name):
+    ans = [np.genfromtxt('tests/data/answers/' + name + '/random_10_node.csv',delimiter=',').reshape(1,1),
+           np.genfromtxt('tests/data/answers/' + name + '/random_100_node.csv',delimiter=',').reshape(1,1),
+           np.genfromtxt('tests/data/answers/' + name + '/8_4x4_ams.csv',delimiter=',').reshape(8,8),
+           np.genfromtxt('tests/data/answers/' + name + '/8_100x100_ams.csv',delimiter=',').reshape(8,8)]
+    return np.array(ans)
+
 class TestFloydWarshall(unittest.TestCase):
     # TODO(kasiajanocha): add test cases
     def setUp(self):

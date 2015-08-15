@@ -2,11 +2,13 @@ import numpy as np
 import unittest
 from pykernels.graph.allgraphlets import All34Graphlets
 from pykernels.graph.allgraphlets import GraphletKernelUtils
+from graphutils import generate_testdata, generate_testanswers
 
 __author__ = 'kasiajanocha'
 
 """
-A simple test for graphlet kernel.
+A bunch of tests checking All34Graphlets Kernel's compatibility with allgraphlets implemented in [4],
+together with a simple (manually checkable) test.
 """
 
 sampledata = [
@@ -42,7 +44,7 @@ samplecounts = np.array([[0.,1.,4.,5.],
 # 0,9,0,1
 # 4,0,6,0
 
-class TestGraphlet(unittest.TestCase):
+class TestGraphletSimple(unittest.TestCase):
     def setUp(self):
         self.data = samplecounts
         self.answers = samplecounts.dot(samplecounts.T)
@@ -52,7 +54,7 @@ class TestGraphlet(unittest.TestCase):
     def tearDown(self):
         pass
 
-    def test_three(self):
+    def testSimple3Graphlets(self):
         K = All34Graphlets(3)
         for i, data in enumerate(self.data):
             self.assertTrue((K.gram(data)==self.answers[i]).all())
@@ -67,7 +69,26 @@ class TestCountGraphlets(unittest.TestCase):
     def tearDown(self):
         pass
 
-    def test_three(self):
+    def testCount3Graphlets(self):
         graphlets = GraphletKernelUtils._generate_graphlets(3,None)
         for i, data in enumerate(self.data):
             self.assertTrue((GraphletKernelUtils._count_graphlets(data, 3, graphlets)==self.answers[i]).all())
+
+class TestGraphlet(unittest.TestCase):
+    def setUp(self):
+        self.data = generate_testdata()
+        self.answers_g3 = generate_testanswers('3Graphlets')
+        # self.answers_g4 = generate_testanswers('4Graphlets')
+
+    def tearDown(self):
+        pass
+
+    def testAll3Graphlets(self):
+        K = All34Graphlets(3)
+        for i, data in enumerate(self.data):
+            self.assertTrue((K.gram(data)==self.answers_g3[i]).all())
+
+    # def testAll4Graphlets(self):
+    #     K = All34Graphlets(4)
+    #     for i, data in enumerate(self.data):
+    #         self.assertTrue((K.gram(data)==self.answers_g4[i]).all())
