@@ -72,7 +72,7 @@ class GraphletKernelUtils(object):
         am = np.array(am)
         res = np.zeros((1, GraphletKernelUtils._number_of_graphlets(size)))
         for subset in itertools.combinations(range(am.shape[0]), size):
-            graphlet = am[subset,:][:,subset]
+            graphlet = (am[subset,:])[:,subset]
             res[0][GraphletKernelUtils._graphlet_index(graphlet, graphlet_array)] += 1
         # print "returning ", res / sum(sum(res))
         return (res / res.sum())
