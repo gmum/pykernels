@@ -1,7 +1,7 @@
 import numpy as np
 import unittest
 from pykernels.graph.shortestpath import floyd_warshall
-from pykernels.graph.allgraphlets import GraphletKernelUtils
+from pykernels.graph import allgraphlets
 
 __author__ = 'kasiajanocha'
 
@@ -58,10 +58,10 @@ class TestGraphletCreation(unittest.TestCase):
         return True
 
     def test3GraphletsCreation(self):
-        gr3 = GraphletKernelUtils._generate_graphlets(3, None)
+        gr3 = allgraphlets._generate_graphlets(3, None)
         self.assertTrue(gr3.shape[0] == 4)
         self.assertTrue(self._contains_values(self.all_3_graphlets, gr3))
 
     def test4GraphletsCreation(self):
-        gr4 = GraphletKernelUtils._generate_graphlets(4, self.all_3_graphlets)
+        gr4 = allgraphlets._generate_graphlets(4, self.all_3_graphlets)
         self.assertTrue(gr4.shape[0] == 11)

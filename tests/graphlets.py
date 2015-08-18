@@ -1,7 +1,7 @@
 import numpy as np
 import unittest
 from pykernels.graph.allgraphlets import All34Graphlets
-from pykernels.graph.allgraphlets import GraphletKernelUtils
+from pykernels.graph import allgraphlets
 from graphutils import generate_testdata, generate_testanswers
 from scipy.misc import comb
 
@@ -72,9 +72,9 @@ class TestCountGraphlets(unittest.TestCase):
         pass
 
     def testCount3Graphlets(self):
-        graphlets = GraphletKernelUtils._generate_graphlets(3,None)
+        graphlets = allgraphlets._generate_graphlets(3,None)
         for i, data in enumerate(self.data):
-            self.assertTrue((GraphletKernelUtils._count_graphlets(data, 3, graphlets)==self.answers[i]).all())
+            self.assertTrue((allgraphlets._count_graphlets(data, 3, graphlets, None)==self.answers[i]).all())
 
 class TestGraphlet(unittest.TestCase):
     """docstring for ClassName"""
@@ -120,12 +120,16 @@ class TestGraphlet(unittest.TestCase):
 
     def setUp(self):
         self.tol = 1e-7
-        sizes = [[10, [4,5,6,7]],
+        sizes3 = [[10, [4, 5, 6, 7]],
                  [100, [5, 18, 29, 31, 56, 90]]]
+        sizes4 = [[10, [4, 5, 6, 7]],
+                 [12, [5, 6, 7, 8, 9, 10]]]
 
-        self.data = np.array([self.create_single_graph_array(s[0], s[1]) for s in sizes])
-        self.gr3 = np.array([self.create_graphlet_counts_array(3,s[0], s[1]) for s in sizes])
-        self.gr4 = np.array([self.create_graphlet_counts_array(4,s[0], s[1]) for s in sizes])
+        self.data3 = np.array([self.create_single_graph_array(s[0], s[1]) for s in sizes3])
+        self.data4 = np.array([self.create_single_graph_array(s[0], s[1]) for s in sizes4])
+        
+        self.gr3 = np.array([self.create_graphlet_counts_array(3,s[0], s[1]) for s in sizes3])
+        self.gr4 = np.array([self.create_graphlet_counts_array(4,s[0], s[1]) for s in sizes4])
 
         self.K3 = All34Graphlets(3)
         self.K4 = All34Graphlets(4)
@@ -134,19 +138,27 @@ class TestGraphlet(unittest.TestCase):
         pass
 
     def testCount3Graphlets(self):
-        for i, data in enumerate(self.data):
-            pass
+        graphlets = allgraphlets._generate_graphlets(3,None)
+        for i, graph_array in enumerate(self.data3):
+            for j, graph in enumerate(graph_array):
+                self.assertTrue((allgraphlets._count_graphlets(graph, 3, graphlets, None)==self.gr3[i][j]).all())       
 
     def testCount4Graphlets(self):
-        for i, data in enumerate(self.data):
-            pass
+        graphlets3 = allgraphlets._generate_graphlets(3,None)
+        graphlets4 = allgraphlets._generate_graphlets(4,graphlets3)
+        for i, graph_array in enumerate(self.data4):
+            for j, graph in enumerate(graph_array):
+                count = allgraphlets._count_graphlets(graph, 4, graphlets4, graphlets3)
+                for g_num in self.gr4[i][j]:
+                    self.assertTrue((np.absolute(count-g_num)<self.tol).any())
+                self.assertTrue((count==0).sum() == 7 + (self.gr4[i][j]==0).sum())
 
     def testGram3(self):
-        for i, data in enumerate(self.data):
+        for i, data in enumerate(self.data3):
             solution = self.gr3[i].dot(self.gr3[i].T)
             self.assertTrue((np.absolute(self.K3.gram(data) - solution) < self.tol).all())
 
     def testGram4(self):
-        for i, data in enumerate(self.data):
+        for i, data in enumerate(self.data4):
             solution = self.gr4[i].dot(self.gr4[i].T)
             self.assertTrue((np.absolute(self.K4.gram(data) - solution) < self.tol).all())
