@@ -17,3 +17,16 @@ def graphs_to_adjacency_lists(data):
             return np.array([G.adjacency_matix for G in data])
         except Exception, e:
             return np.array(data)
+
+def relabel(data):
+    s = dict()
+    for node_labels in data:
+        for label in node_labels:
+            if label not in s.keys():
+                l = len(s)
+                s[label] = l
+    res = np.zeros((len(data), len(data[0])))
+    for i, node_labels in enumerate(data):
+        for j, label in enumerate(node_labels):
+            res[i][j] = s[label]
+    return res

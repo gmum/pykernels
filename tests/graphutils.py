@@ -2,6 +2,7 @@ import numpy as np
 import unittest
 from pykernels.graph.shortestpath import floyd_warshall
 from pykernels.graph import allgraphlets
+from pykernels.graph.basic import relabel
 
 __author__ = 'kasiajanocha'
 
@@ -23,6 +24,13 @@ def generate_testanswers(name):
            np.genfromtxt('tests/data/answers/' + name + '/8_4x4_ams.csv',delimiter=',').reshape(8,8),
            np.genfromtxt('tests/data/answers/' + name + '/8_100x100_ams.csv',delimiter=',').reshape(8,8)]
     return np.array(ans)
+
+def generate_node_labels():
+    tdata =  [[np.genfromtxt('tests/data/random_10_node_labels.csv',delimiter=',').reshape(10,10)],
+              [np.genfromtxt('tests/data/random_100_node_labels.csv',delimiter=',').reshape(100,100)],
+              np.genfromtxt('tests/data/8_4x4_ams_labels.csv',delimiter=',').reshape(8,4,4),
+              np.genfromtxt('tests/data/8_100x100_ams_labels.csv',delimiter=',').reshape(8,100,100)]
+    return np.array(tdata)
 
 class TestFloydWarshall(unittest.TestCase):
     # TODO(kasiajanocha): add test cases
@@ -65,3 +73,20 @@ class TestGraphletCreation(unittest.TestCase):
     def test4GraphletsCreation(self):
         gr4 = allgraphlets._generate_graphlets(4, self.all_3_graphlets)
         self.assertTrue(gr4.shape[0] == 11)
+
+class TestRelabel(unittest.TestCase):
+    def setUp(self):
+        self.data = [[["l0","l1","l0"],["l1","l1","l0"],["l2","l2","l2"]],
+                     [[1,10,30,1,60]],
+                     [[0,0],[0,0]]]
+        self.answers = [[[0,1,0],[1,1,0],[2,2,2]],
+                        [[0,1,2,0,3]],
+                        [[0,0],[0,0]]]
+        self.answers = np.array(self.answers)
+
+    def tearDown(self):
+        pass
+
+    def testRelabel(self):
+        for i, data in enumerate(self.data):
+          self.assertTrue((relabel(data) == self.answers[i]).all())

@@ -36,20 +36,19 @@ class ShortestPath(GraphKernel):
             res[i] = fw
         return res
 
-    def _create_accum_list_labeled(self, I, SP, maxpath, labels_t, numlabels=None):
-        if numlabels is None:
-            numlabels = labels_t.max()
+    def _create_accum_list_labeled(self, I, SP, maxpath, labels_t):
+        numlabels = labels_t.max()
         res = csr_matrix(np.zeros((SP.shape[0], (maxpath+1)*numlabels*(numlabels+1)/2)))
         for i, s in enumerate(SP):
-            labels = labels_t[i].node_labels
+            labels = labels_t[i]
             labels_aux = matlib.repmat(labels, 1, labels.shape[0])
-            min_lab = min(labels_aux, labels_aux.T)
-            max_lab = max(labels_aux, labels_aux.T)
+            min_lab = np.minimum(labels_aux, labels_aux.T)
+            max_lab = np.maximum(labels_aux, labels_aux.T)
             min_lab = min_lab[I[i]]
             max_lab = max_lab[I[i]]
             # Ind=Ds{i}(I)*L*(L+1)/2+(a(I)-1).*(2*L+2-a(I))/2+b(I)-a(I)+1;
             ind = s[I[i]]*numlabels*(numlabels+1)/2 + (min_lab - 1) * (2*numlabels + 2 - min_lab)/2 + max_lab - min_lab + 1
-            accum = np.zeros(maxpath+1)
+            accum = np.zeros((maxpath+1)*numlabels*(numlabels+1)/2)
             accum[:ind.max()+1] += np.bincount(ind.astype(int))
             res[i] = csr_matrix(accum)
         return res
