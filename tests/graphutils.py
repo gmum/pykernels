@@ -26,10 +26,10 @@ def generate_testanswers(name):
     return np.array(ans)
 
 def generate_node_labels():
-    tdata =  [[np.genfromtxt('tests/data/random_10_node_labels.csv',delimiter=',').reshape(10,10)],
-              [np.genfromtxt('tests/data/random_100_node_labels.csv',delimiter=',').reshape(100,100)],
-              np.genfromtxt('tests/data/8_4x4_ams_labels.csv',delimiter=',').reshape(8,4,4),
-              np.genfromtxt('tests/data/8_100x100_ams_labels.csv',delimiter=',').reshape(8,100,100)]
+    tdata =  [np.genfromtxt('tests/data/random_10_node_labels.csv',delimiter=',').reshape(1,10),
+              np.genfromtxt('tests/data/random_100_node_labels.csv',delimiter=',').reshape(1,100),
+              np.genfromtxt('tests/data/8_4x4_ams_labels.csv',delimiter=',').reshape(8,4),
+              np.genfromtxt('tests/data/8_100x100_ams_labels.csv',delimiter=',').reshape(8,100)]
     return np.array(tdata)
 
 class TestFloydWarshall(unittest.TestCase):

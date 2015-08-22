@@ -47,7 +47,7 @@ class ShortestPath(GraphKernel):
             min_lab = min_lab[I[i]]
             max_lab = max_lab[I[i]]
             # Ind=Ds{i}(I)*L*(L+1)/2+(a(I)-1).*(2*L+2-a(I))/2+b(I)-a(I)+1;
-            ind = s[I[i]]*numlabels*(numlabels+1)/2 + (min_lab - 1) * (2*numlabels + 2 - min_lab)/2 + max_lab - min_lab + 1
+            ind = s[I[i]]*numlabels*(numlabels+1)/2 + (min_lab - 1) * (2*numlabels + 2 - min_lab)/2 + max_lab - min_lab
             accum = np.zeros((maxpath+1)*numlabels*(numlabels+1)/2)
             accum[:ind.max()+1] += np.bincount(ind.astype(int))
             res[i] = csr_matrix(accum)
