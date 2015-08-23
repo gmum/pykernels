@@ -2,7 +2,7 @@ import numpy as np
 import numpy.matlib as matlib
 import basic
 from pykernels.base import Kernel, GraphKernel
-from scipy.sparse import csr_matrix
+from scipy.sparse import lil_matrix
 
 __author__ = 'kasiajanocha'
 
@@ -38,7 +38,7 @@ class ShortestPath(GraphKernel):
 
     def _create_accum_list_labeled(self, I, SP, maxpath, labels_t):
         numlabels = labels_t.max()
-        res = csr_matrix(np.zeros((SP.shape[0], (maxpath+1)*numlabels*(numlabels+1)/2)))
+        res = lil_matrix(np.zeros((SP.shape[0], (maxpath+1)*numlabels*(numlabels+1)/2)))
         for i, s in enumerate(SP):
             labels = labels_t[i]
             labels_aux = matlib.repmat(labels, 1, labels.shape[0])
@@ -50,16 +50,16 @@ class ShortestPath(GraphKernel):
             ind = s[I[i]]*numlabels*(numlabels+1)/2 + (min_lab - 1) * (2*numlabels + 2 - min_lab)/2 + max_lab - min_lab
             accum = np.zeros((maxpath+1)*numlabels*(numlabels+1)/2)
             accum[:ind.max()+1] += np.bincount(ind.astype(int))
-            res[i] = csr_matrix(accum)
+            res[i] = lil_matrix(accum)
         return res
 
     def _create_accum_list(self, I, SP, maxpath):
-        res = csr_matrix(np.zeros((SP.shape[0], maxpath+1)))
+        res = lil_matrix(np.zeros((SP.shape[0], maxpath+1)))
         for i, s in enumerate(SP):
             ind = s[I[i]]
             accum = np.zeros(maxpath+1)
             accum[:ind.max()+1] += np.bincount(ind.astype(int))
-            res[i] = csr_matrix(accum)
+            res[i] = lil_matrix(accum)
         return res
 
     def _compute(self, data_1, data_2):

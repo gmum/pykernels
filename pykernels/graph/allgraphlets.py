@@ -31,23 +31,22 @@ def _number_of_graphlets(size):
         return 34
 
 def _generate_graphlets(n, graphlet3_array):
-    res = []
-    iu = np.triu_indices(n,1) # Start at first minor diagonal
-    for k in range(0,2**(iu[0].size)):
-        # print k
-        G = np.zeros([n,n])
-        G[iu] = dec2bin(k, iu[0].size)
-        G = G + G.T
-        np.fill_diagonal(G, 1)
-        if not _contains_graphlet(res, G, graphlet3_array):
-            res.append(G)
-    return np.array(res)
+    if n == 3:
+        return np.genfromtxt('pykernels/graph/data/3graphlets.csv',delimiter=',').reshape(4,3,3)
+    elif n == 4:
+        return np.genfromtxt('pykernels/graph/data/4graphlets.csv',delimiter=',').reshape(11,4,4)
 
 def _contains_graphlet(graphlet_list, graphlet, graphlet3_array):
     for g in graphlet_list:
         if _compare_graphlets(g, graphlet, graphlet3_array):
             return True
     return False
+
+def _is_3star(am):
+    return (am.sum() == 10 and 4 in [a.sum() for a in am])
+
+def _4_graphlet_contains_3star(am):
+    return (4 in [a.sum() for a in am])
 
 def _compare_graphlets(am1, am2, graphlet3_array):
     k = np.array(am1).shape[0]
@@ -56,7 +55,28 @@ def _compare_graphlets(am1, am2, graphlet3_array):
         return np.array(am1).sum() == np.array(am2).sum()
     else:
         # (k-1) graphlet count determines graph isomorphism for small graphs
-        return (_count_graphlets(am1, k-1, graphlet3_array, None) == _count_graphlets(am2, k-1, graphlet3_array, None)).all()
+        # return (_count_graphlets(am1, k-1, graphlet3_array, None) == _count_graphlets(am2, k-1, graphlet3_array, None)).all()
+        if not np.array(am1).sum() == np.array(am2).sum():
+            return False
+        if np.array(am1).sum() in (4, 6, 14, 16):
+            # 0, 1, 5 or 6 edges
+            return True
+        if np.array(am1).sum() == 8:
+            # 2 edges - two pairs or 2-path
+            return (3.0 in [am.sum() for am in am1]) == (3.0 in [am.sum() for am in am2])
+        if np.array(am1).sum() == 10:
+            # 3 edges - 3-star, 3-path or 3-cycle
+            sums1 = [am.sum() for am in am1]
+            sums2 = [am.sum() for am in am2]
+            if (_is_3star(am1) + _is_3star(am2))%2 == 1:
+                return False
+            if _is_3star(am1) and _is_3star(am2):
+                return True
+            return (1 in sums1) == (1 in sums2)
+        if np.array(am1).sum() == 12:
+            # 4 edges - a simple cycle or something containing 3-star
+            return (_4_graphlet_contains_3star(am1) == _4_graphlet_contains_3star(am2))
+
     return False
 
 def _graphlet_index(am, graphlet_array, graphlet3_array):
