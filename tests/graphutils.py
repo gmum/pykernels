@@ -79,9 +79,9 @@ class TestRelabel(unittest.TestCase):
         self.data = [[["l0","l1","l0"],["l1","l1","l0"],["l2","l2","l2"]],
                      [[1,10,30,1,60]],
                      [[0,0],[0,0]]]
-        self.answers = [[[0,1,0],[1,1,0],[2,2,2]],
-                        [[0,1,2,0,3]],
-                        [[0,0],[0,0]]]
+        self.answers = [[[1,2,1],[2,2,1],[3,3,3]],
+                        [[1,2,3,1,4]],
+                        [[1,1],[1,1]]]
         self.answers = np.array(self.answers)
 
     def tearDown(self):
