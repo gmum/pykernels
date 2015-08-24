@@ -29,4 +29,4 @@ def relabel(data):
     for i, node_labels in enumerate(data):
         for j, label in enumerate(node_labels):
             res[i][j] = s[label]
-    return res
+    return res + 1

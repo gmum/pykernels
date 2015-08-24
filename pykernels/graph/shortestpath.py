@@ -42,8 +42,8 @@ class ShortestPath(GraphKernel):
         for i, s in enumerate(SP):
             labels = labels_t[i]
             labels_aux = matlib.repmat(labels, 1, labels.shape[0])
-            min_lab = np.minimum(labels_aux, labels_aux.T)
-            max_lab = np.maximum(labels_aux, labels_aux.T)
+            min_lab = np.minimum(labels_aux.T, labels_aux)
+            max_lab = np.maximum(labels_aux.T, labels_aux)
             min_lab = min_lab[I[i]]
             max_lab = max_lab[I[i]]
             # Ind=Ds{i}(I)*L*(L+1)/2+(a(I)-1).*(2*L+2-a(I))/2+b(I)-a(I)+1;
@@ -74,10 +74,10 @@ class ShortestPath(GraphKernel):
             accum_list_1 = self._create_accum_list(I_1, sp_1, maxpath)
             accum_list_2 = self._create_accum_list(I_2, sp_2, maxpath)
         else:
-            lables_1 = np.array([G.node_labels for G in data_1])
-            accum_list_1 = self._create_accum_list_labeled(I_1, sp_1, maxpath, lables_1)
-            lables_2 = np.array([G.node_labels for G in data_1])
-            accum_list_2 = self._create_accum_list_labeled(I_2, sp_2, maxpath, lables_2)
+            labels_1 = basic.relabel(np.array([G.node_labels for G in data_1]))
+            accum_list_1 = self._create_accum_list_labeled(I_1, sp_1, maxpath, labels_1)
+            labels_2 = basic.relabel(np.array([G.node_labels for G in data_1]))
+            accum_list_2 = self._create_accum_list_labeled(I_2, sp_2, maxpath, labels_2)
         return np.asarray(accum_list_1.dot(accum_list_2.T).todense())
 
     def dim(self):

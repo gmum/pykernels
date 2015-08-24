@@ -26,15 +26,14 @@ class TestShortestPath(unittest.TestCase):
     def tearDown(self):
         pass
 
-    def testSPKernel(self):
-        K = ShortestPath()
-        for i, data in enumerate(self.data):
-            self.assertTrue((K.gram(data)==self.answers_unlabeled[i]).all())
-        for i, data in enumerate(self.graphs):
-            self.assertTrue((K.gram(data)==self.answers_unlabeled[i]).all())
+    # def testSPKernel(self):
+    #     K = ShortestPath()
+    #     for i, data in enumerate(self.data):
+    #         self.assertTrue((K.gram(data)==self.answers_unlabeled[i]).all())
+    #     for i, data in enumerate(self.graphs):
+    #         self.assertTrue((K.gram(data)==self.answers_unlabeled[i]).all())
 
     def testLabeledSPKernel(self):
         K = ShortestPath(labeled=True)
         for i, data in enumerate(self.graphs):
-            print K.gram(data)
             self.assertTrue((K.gram(data)==self.answers_labeled[i]).all())
