@@ -72,9 +72,9 @@ class TestCountGraphlets(unittest.TestCase):
         pass
 
     def testCount3Graphlets(self):
-        graphlets = allgraphlets._generate_graphlets(3,None)
+        graphlets = allgraphlets._generate_graphlets(3)
         for i, data in enumerate(self.data):
-            self.assertTrue((allgraphlets._count_graphlets(data, 3, graphlets, None)==self.answers[i]).all())
+            self.assertTrue((allgraphlets._count_graphlets(data, 3, graphlets)==self.answers[i]).all())
 
 class TestGraphlet(unittest.TestCase):
     """docstring for ClassName"""
@@ -138,17 +138,16 @@ class TestGraphlet(unittest.TestCase):
         pass
 
     def testCount3Graphlets(self):
-        graphlets = allgraphlets._generate_graphlets(3,None)
+        graphlets = allgraphlets._generate_graphlets(3)
         for i, graph_array in enumerate(self.data3):
             for j, graph in enumerate(graph_array):
-                self.assertTrue((allgraphlets._count_graphlets(graph, 3, graphlets, None)==self.gr3[i][j]).all())       
+                self.assertTrue((allgraphlets._count_graphlets(graph, 3, graphlets)==self.gr3[i][j]).all())       
 
     def testCount4Graphlets(self):
-        graphlets3 = allgraphlets._generate_graphlets(3,None)
-        graphlets4 = allgraphlets._generate_graphlets(4,graphlets3)
+        graphlets4 = allgraphlets._generate_graphlets(4)
         for i, graph_array in enumerate(self.data4):
             for j, graph in enumerate(graph_array):
-                count = allgraphlets._count_graphlets(graph, 4, graphlets4, graphlets3)
+                count = allgraphlets._count_graphlets(graph, 4, graphlets4)
                 for g_num in self.gr4[i][j]:
                     self.assertTrue((np.absolute(count-g_num)<self.tol).any())
                 self.assertTrue((count==0).sum() == 7 + (self.gr4[i][j]==0).sum())

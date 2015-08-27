@@ -1,3 +1,8 @@
+"""
+A module containing basic operations on graphs.
+"""
+__author__ = 'kasiajanocha'
+
 import numpy as np
 
 class Graph(object):
@@ -9,24 +14,33 @@ class Graph(object):
         self.edge_labels = edge_labels
 
 def graphs_to_adjacency_lists(data):
+    """
+    Given a list of graphs, output a numpy.array
+    containing their adjacency matices.
+    """
     try:
         if data.ndim == 3:
             return np.array(data)
-    except Exception, e:
+    except Exception, exc:
         try:
             return np.array([G.adjacency_matix for G in data])
-        except Exception, e:
+        except Exception, exc:
             return np.array(data)
 
 def relabel(data):
-    s = dict()
+    """
+    Given list of labels for each graph in the dataset,
+    rename them so they belong to set {1, ..., num_labels},
+    where num_labels is number of the distinct labels.
+    """
+    label_set = dict()
     for node_labels in data:
         for label in node_labels:
-            if label not in s.keys():
-                l = len(s)
-                s[label] = l
+            if label not in label_set.keys():
+                llen = len(label_set)
+                label_set[label] = llen
     res = np.zeros((len(data), len(data[0])))
     for i, node_labels in enumerate(data):
         for j, label in enumerate(node_labels):
-            res[i][j] = s[label]
+            res[i][j] = label_set[label]
     return res + 1
