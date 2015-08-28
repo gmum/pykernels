@@ -32,6 +32,7 @@ def relabel(data):
     Given list of labels for each graph in the dataset,
     rename them so they belong to set {1, ..., num_labels},
     where num_labels is number of the distinct labels.
+    Return tuple consisting of new labels and maximal label.
     """
     label_set = dict()
     for node_labels in data:
@@ -39,8 +40,9 @@ def relabel(data):
             if label not in label_set.keys():
                 llen = len(label_set)
                 label_set[label] = llen
-    res = np.zeros((len(data), len(data[0])))
+    res = []
     for i, node_labels in enumerate(data):
+        res.append([])
         for j, label in enumerate(node_labels):
-            res[i][j] = label_set[label]
-    return res + 1
+            res[i].append(label_set[label] + 1)
+    return res, len(label_set)

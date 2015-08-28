@@ -32,7 +32,7 @@ def _apply_floyd_warshall(data):
     """
     res = []
     maximal = 0
-    for i, graph in enumerate(data):
+    for graph in data:
         floyd = floyd_warshall(graph, graph)
         maximal = max(maximal, (floyd[~np.isinf(floyd)]).max())
         res.append(floyd)
@@ -45,24 +45,26 @@ class ShortestPath(GraphKernel):
     def __init__(self, labeled=False):
         self.labeled = labeled
 
-    def _create_accum_list_labeled(self, shortest_paths, maxpath, labels_t):
+    def _create_accum_list_labeled(self, shortest_paths, maxpath,
+                                   labels_t, numlabels):
         """
         Construct accumulation array matrix for one dataset
         containing labaled graph data.
         """
-        numlabels = labels_t.max()
         res = lil_matrix(
             np.zeros((len(shortest_paths),
                       (maxpath + 1) * numlabels * (numlabels + 1) / 2)))
         for i, s in enumerate(shortest_paths):
             labels = labels_t[i]
-            labels_aux = matlib.repmat(labels, 1, labels.shape[0])
+            labels_aux = matlib.repmat(labels, 1, len(labels))
             min_lab = np.minimum(labels_aux.T, labels_aux)
             max_lab = np.maximum(labels_aux.T, labels_aux)
             subsetter = np.triu(~(np.isinf(s)))
             min_lab = min_lab[subsetter]
             max_lab = max_lab[subsetter]
-            ind = s[subsetter] * numlabels * (numlabels + 1) / 2 + (min_lab - 1) * (2*numlabels + 2 - min_lab) / 2 + max_lab - min_lab
+            ind = s[subsetter] * numlabels * (numlabels + 1) / 2 + \
+                    (min_lab - 1) * (2*numlabels + 2 - min_lab) / 2 + \
+                    max_lab - min_lab
             accum = np.zeros((maxpath + 1) * numlabels * (numlabels + 1) / 2)
             accum[:ind.max() + 1] += np.bincount(ind.astype(int))
             res[i] = lil_matrix(accum)
@@ -87,17 +89,19 @@ class ShortestPath(GraphKernel):
         ams_2 = basic.graphs_to_adjacency_lists(data_2)
         sp_1, max1 = _apply_floyd_warshall(np.array(ams_1))
         sp_2, max2 = _apply_floyd_warshall(np.array(ams_2))
-        maxpath = max(max1, max2)        
+        maxpath = max(max1, max2)
         if not self.labeled:
             accum_list_1 = self._create_accum_list(sp_1, maxpath)
             accum_list_2 = self._create_accum_list(sp_2, maxpath)
         else:
-            labels_1 = basic.relabel(np.array([G.node_labels for G in data_1]))
-            accum_list_1 = self._create_accum_list_labeled(sp_1,
-                                                           maxpath, labels_1)
-            labels_2 = basic.relabel(np.array([G.node_labels for G in data_1]))
-            accum_list_2 = self._create_accum_list_labeled(sp_2,
-                                                           maxpath, labels_2)
+            labels_1, numlabels1 = basic.relabel(
+                np.array([G.node_labels for G in data_1]))
+            accum_list_1 = self._create_accum_list_labeled(sp_1, maxpath,
+                                                           labels_1, numlabels1)
+            labels_2, numlabels2 = basic.relabel(
+                np.array([G.node_labels for G in data_1]))
+            accum_list_2 = self._create_accum_list_labeled(sp_2, maxpath,
+                                                           labels_2, numlabels2)
         return np.asarray(accum_list_1.dot(accum_list_2.T).todense())
 
     def dim(self):
