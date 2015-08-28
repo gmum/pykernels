@@ -40,10 +40,14 @@ def _4_graphlet_contains_3star(adj_mat):
     """Check if a given graphlet of size 4 contains a 3-star"""
     return (4 in [a.sum() for a in adj_mat])
 
-def _compare_graphlets(adj_mat1, adj_mat2):
+def _compare_graphlets(am1, am2):
     """
     Compare two graphlets.
     """
+    adj_mat1 = am1
+    adj_mat2 = am2
+    np.fill_diagonal(adj_mat1, 1)
+    np.fill_diagonal(adj_mat2, 1)
     k = np.array(adj_mat1).shape[0]
     if k == 3:
         # the number of edges determines isomorphism of graphs of size 3.
