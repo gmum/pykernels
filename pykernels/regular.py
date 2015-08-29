@@ -240,6 +240,13 @@ class Chi2(PositiveKernel):
     """
     Chi^2 kernel, 
         K(x, y) = exp( -gamma * SUM_i (x_i - y_i)^2 / (x_i + y_i) )
+
+    as defined in:
+    "Local features and kernels for classification 
+     of texture and object categories: A comprehensive study"
+    Zhang, J. and Marszalek, M. and Lazebnik, S. and Schmid, C. 
+    International Journal of Computer Vision 2007 
+    http://eprints.pascal-network.org/archive/00002309/01/Zhang06-IJCV.pdf
     """
 
     def __init__(self, gamma=1.):
