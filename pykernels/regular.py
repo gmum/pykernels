@@ -8,7 +8,7 @@ __author__ = 'lejlot'
 from pykernels.base import Kernel
 import numpy as np
 from utils import euclidean_dist_matrix
-
+import warning
 
 class Exponential(Kernel):
     """
@@ -149,7 +149,7 @@ class TStudent(Kernel):
     as defined in:
     "Alternative Kernels for Image Recognition"
     Sabri Boughorbel, Jean-Philippe Tarel, Nozha Boujemaa
-    INRIA – INRIA Activity Reports – RalyX
+    INRIA - INRIA Activity Reports - RalyX
     http://ralyx.inria.fr/2004/Raweb/imedia/uid84.html
     """
 
@@ -197,6 +197,7 @@ class ANOVA(Kernel):
         return None
 
 
+
 from abc import ABCMeta
 
 class PositiveKernel(Kernel):
@@ -221,7 +222,7 @@ class AdditiveChi2(PositiveKernel):
     def _compute(self, data_1, data_2):
 
         if np.any(data_1 < 0) or np.any(data_2 < 0):
-            raise Exception('Additive Chi^2 kernel requires data to be strictly positive!')
+            warning.warn('Additive Chi^2 kernel requires data to be strictly positive!')
 
         kernel = np.zeros((data_1.shape[0], data_2.shape[0]))
 
@@ -239,13 +240,6 @@ class Chi2(PositiveKernel):
     """
     Chi^2 kernel, 
         K(x, y) = exp( -gamma * SUM_i (x_i - y_i)^2 / (x_i + y_i) )
-
-    as defined in
-
-    "Efficient Additive Kernels via Explicit Feature Maps"
-    Andrea Vedaldi, Andrew Zisserman
-    IEEE TRANSACTIONS ON PATTERN ANALYSIS AND MACHINE INTELLIGENCE
-    http://www.robots.ox.ac.uk/~vedaldi/assets/pubs/vedaldi11efficient.pdf
     """
 
     def __init__(self, gamma=1.):
@@ -254,7 +248,7 @@ class Chi2(PositiveKernel):
     def _compute(self, data_1, data_2):
 
         if np.any(data_1 < 0) or np.any(data_2 < 0):
-            raise Exception('Additive Chi^2 kernel requires data to be strictly positive!')
+            warning.warn('Chi^2 kernel requires data to be strictly positive!')
 
         kernel = np.zeros((data_1.shape[0], data_2.shape[0]))
 
@@ -278,7 +272,7 @@ class Min(PositiveKernel):
     def _compute(self, data_1, data_2):
 
         if np.any(data_1 < 0) or np.any(data_2 < 0):
-            raise Exception('Min kernel requires data to be strictly positive!')
+            warning.warn('Min kernel requires data to be strictly positive!')
 
         kernel = np.zeros((data_1.shape[0], data_2.shape[0]))
 
@@ -293,7 +287,7 @@ class Min(PositiveKernel):
         return None
 
 
-class GeneralizedHistogramIntersection(PositiveKernel):
+class GeneralizedHistogramIntersection(Kernel):
     """
     Generalized histogram intersection kernel
         K(x, y) = SUM_i min(|x_i|^alpha, |y_i|^alpha)
@@ -312,6 +306,42 @@ class GeneralizedHistogramIntersection(PositiveKernel):
 
         return Min()._compute(np.abs(data_1)**self._alpha,
                               np.abs(data_2)**self._alpha)
+
+    def dim(self):
+        return None
+
+class Spline(PositiveKernel):
+    """
+    Spline kernel, 
+        K(x, y) = PROD_i 1 + x_iy_i + x_iy_i min(x_i,y_i)
+                           - (x_i+y_i)/2 * min(x_i,y_i)^2
+                           + 1/3 * min(x_i, y_i)^3
+
+    as defined in
+
+    "Support Vector Machines for Classification and Regression"
+    Steve Gunn
+    ISIS Technical Report
+    http://www.svms.org/tutorials/Gunn1998.pdf
+    """
+
+    def _compute(self, data_1, data_2):
+
+        if np.any(data_1 < 0) or np.any(data_2 < 0):
+            warning.warn('Spline kernel requires data to be strictly positive!')
+
+        kernel = np.ones((data_1.shape[0], data_2.shape[0]))
+
+        for d in range(data_1.shape[1]):
+            column_1 = data_1[:, d].reshape(-1, 1)
+            column_2 = data_2[:, d].reshape(-1, 1)
+            c_prod = column_1 * column_2.T
+            c_sum = column_1 + column_2.T
+            c_min = np.minimum(column_1, column_2.T)
+            kernel *= 1. + c_prod + c_prod * c_min \
+                         - c_sum/2. * c_min ** 2. \
+                         + 1./3. * c_min ** 3.
+        return kernel
 
     def dim(self):
         return None
