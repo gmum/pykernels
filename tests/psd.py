@@ -68,7 +68,14 @@ class TestPositiveDefinitness(unittest.TestCase):
                                [ 0, 1, 0, 0],
                                [ 0, 0, 1, 0],
                                [ 1, 0, 0, 1]])]]
-
+        elif PositiveKernel in kernel.__mro__:
+            def _pos(x):
+                return np.abs(x) + 10e-5
+            return [_pos(np.random.randn(100, 20)), _pos(np.random.randn(500, 2)),
+                   _pos(np.random.randn(10, 100)), _pos(np.random.rand(100, 20)),
+                   _pos(np.random.rand(500, 100)), _pos(np.random.rand(3, 1000))]
+        elif ConditionalyPositiveDefiniteKernel in kernel.__mro__:
+            return [] # This test is now suited for CPD kernels
         else:
             return [np.random.randn(100, 20), np.random.randn(500, 2),
                    np.random.randn(10, 100), np.random.rand(100, 20),
