@@ -94,11 +94,8 @@ class ShortestPath(GraphKernel):
             accum_list_1 = self._create_accum_list(sp_1, maxpath)
             accum_list_2 = self._create_accum_list(sp_2, maxpath)
         else:
-            labels_1, numlabels1 = basic.relabel(
-                np.array([G.node_labels for G in data_1]))
-            labels_2, numlabels2 = basic.relabel(
-                np.array([G.node_labels for G in data_2]))
-            numlabels = max(numlabels1, numlabels2)
+            labels_1, labels_2, numlabels = basic.relabel(
+                [G.node_labels for G in data_1], [G.node_labels for G in data_2])
             accum_list_1 = self._create_accum_list_labeled(sp_1, maxpath,
                                                            labels_1, numlabels)
             accum_list_2 = self._create_accum_list_labeled(sp_2, maxpath,

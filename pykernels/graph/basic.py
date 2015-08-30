@@ -27,13 +27,17 @@ def graphs_to_adjacency_lists(data):
         except Exception, exc:
             return np.array(data)
 
-def relabel(data):
+def relabel(data, data_2):
     """
     Given list of labels for each graph in the dataset,
     rename them so they belong to set {1, ..., num_labels},
     where num_labels is number of the distinct labels.
     Return tuple consisting of new labels and maximal label.
     """
+    len_first = len(data)
+    for d in data_2:
+        data.append(d)
+    data = np.array(data)
     label_set = dict()
     for node_labels in data:
         for label in node_labels:
@@ -45,4 +49,4 @@ def relabel(data):
         res.append([])
         for j, label in enumerate(node_labels):
             res[i].append(label_set[label] + 1)
-    return res, len(label_set)
+    return res[:len_first], res[len_first:], len(label_set)
