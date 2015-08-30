@@ -55,6 +55,7 @@ for binary sequences and even kernels for labeled graphs.
     * Spline
     * Sorensen
     * Tanimoto
+    * Wavelet
     * Log (CPD)
     * Power (CPD)
 

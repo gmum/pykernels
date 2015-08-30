@@ -213,6 +213,49 @@ class ANOVA(Kernel):
     def dim(self):
         return None
 
+
+def default_wavelet(x):
+    return np.cos(1.75*x)*np.exp(-x**2/2)
+
+class Wavelet(Kernel):
+    """
+    Wavelet kernel,
+
+        K(x, y) = PROD_i h( (x_i-c)/a ) h( (y_i-c)/a )
+
+    or for c = None
+
+        K(x, y) = PROD_i h( (x_i - y_i)/a )
+
+    as defined in
+    "Wavelet Support Vector Machine"
+    Li Zhang, Weida Zhou, Licheng Jiao
+    IEEE Transactions on System, Man, and Cybernetics
+    http://ieeexplore.ieee.org/xpl/login.jsp?tp=&arnumber=1262479
+    """
+
+    def __init__(self, h=default_wavelet, c=None, a=1):
+        self._c = c
+        self._a = a
+        self._h = h
+
+    def _compute(self, data_1, data_2):
+
+        kernel = np.ones((data_1.shape[0], data_2.shape[0]))
+
+        for d in range(data_1.shape[1]):
+            column_1 = data_1[:, d].reshape(-1, 1)
+            column_2 = data_2[:, d].reshape(-1, 1)
+            if self._c is None:
+                kernel *= self._h( (column_1 - column_2.T) / self._a )
+            else:
+                kernel *= self._h( (column_1 - self._c) / self._a ) * self._h( (column_2.T - self._c) / self._a )
+
+        return kernel
+
+    def dim(self):
+        return None
+
 class Tanimoto(Kernel):
     """
     Tanimoto kernel
