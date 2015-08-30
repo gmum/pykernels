@@ -10,6 +10,23 @@ import numpy as np
 from utils import euclidean_dist_matrix
 import warnings
 
+class Cossim(Kernel):
+    """
+    Cosine similarity kernel, 
+
+        K(x, y) = <x, y> / (||x|| ||y||)
+
+    """
+
+    def _compute(self, data_1, data_2):
+        self._dim = data_1.shape[1]
+        norm_1 = np.sqrt((data_1 ** 2).sum(axis=1)).reshape(data_1.shape[0], 1)
+        norm_2 = np.sqrt((data_2 ** 2).sum(axis=1)).reshape(data_2.shape[0], 1)
+        return data_1.dot(data_2.T) / (norm_1 * norm_2.T)
+
+    def dim(self):
+        return self._dim
+
 class Exponential(Kernel):
     """
     Exponential kernel, 
@@ -196,7 +213,50 @@ class ANOVA(Kernel):
     def dim(self):
         return None
 
+class Tanimoto(Kernel):
+    """
+    Tanimoto kernel
+        K(x, y) = <x, y> / (||x||^2 + ||y||^2 - <x, y>)
 
+    as defined in:
+
+    "Graph Kernels for Chemical Informatics"
+    Liva Ralaivola, Sanjay J. Swamidass, Hiroto Saigo and Pierre Baldi
+    Neural Networks
+    http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.92.483&rep=rep1&type=pdf
+    """
+    def _compute(self, data_1, data_2):
+
+        norm_1 = (data_1 ** 2).sum(axis=1).reshape(data_1.shape[0], 1)
+        norm_2 = (data_2 ** 2).sum(axis=1).reshape(data_2.shape[0], 1)
+        prod = data_1.dot(data_2.T)
+        return prod / (norm_1 + norm_2.T - prod)
+
+    def dim(self):
+        return None
+
+
+class Sorensen(Kernel):
+    """
+    Sorensen kernel
+        K(x, y) = 2 <x, y> / (||x||^2 + ||y||^2)
+
+    as defined in:
+
+    "Graph Kernels for Chemical Informatics"
+    Liva Ralaivola, Sanjay J. Swamidass, Hiroto Saigo and Pierre Baldi
+    Neural Networks
+    http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.92.483&rep=rep1&type=pdf
+    """
+    def _compute(self, data_1, data_2):
+
+        norm_1 = (data_1 ** 2).sum(axis=1).reshape(data_1.shape[0], 1)
+        norm_2 = (data_2 ** 2).sum(axis=1).reshape(data_2.shape[0], 1)
+        prod = data_1.dot(data_2.T)
+        return 2 * prod / (norm_1 + norm_2.T)
+
+    def dim(self):
+        return None
 
 from abc import ABCMeta
 
@@ -242,6 +302,7 @@ class Chi2(PositiveKernel):
         K(x, y) = exp( -gamma * SUM_i (x_i - y_i)^2 / (x_i + y_i) )
 
     as defined in:
+
     "Local features and kernels for classification 
      of texture and object categories: A comprehensive study"
     Zhang, J. and Marszalek, M. and Lazebnik, S. and Schmid, C. 
@@ -316,6 +377,37 @@ class GeneralizedHistogramIntersection(Kernel):
 
     def dim(self):
         return None
+
+class MinMax(PositiveKernel):
+    """
+    MinMax kernel
+        K(x, y) = SUM_i min(x_i, y_i) / max(x_i, y_i)
+
+    as defined in:
+
+    "Graph Kernels for Chemical Informatics"
+    Liva Ralaivola, Sanjay J. Swamidass, Hiroto Saigo and Pierre Baldi
+    Neural Networks
+    http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.92.483&rep=rep1&type=pdf
+    """
+
+    def _compute(self, data_1, data_2):
+
+        if np.any(data_1 < 0) or np.any(data_2 < 0):
+            warnings.warn('MinMax kernel requires data to be strictly positive!')
+
+        kernel = np.zeros((data_1.shape[0], data_2.shape[0]))
+
+        for d in range(data_1.shape[1]):
+            column_1 = data_1[:, d].reshape(-1, 1)
+            column_2 = data_2[:, d].reshape(-1, 1)
+            kernel += np.minimum(column_1, column_2.T) / np.maximum(column_1, column_2.T)
+
+        return kernel
+
+    def dim(self):
+        return None
+
 
 class Spline(PositiveKernel):
     """

@@ -39,6 +39,7 @@ for binary sequences and even kernels for labeled graphs.
     * Linear
     * Polynomial
     * RBF
+    * Cosine similarity
     * Exponential
     * Laplacian
     * Rational quadratic
@@ -48,9 +49,12 @@ for binary sequences and even kernels for labeled graphs.
     * ANOVA
     * Additive Chi^2
     * Chi^2
+    * MinMax
     * Min/Histogram intersection
     * Generalized histogram intersection
     * Spline
+    * Sorensen
+    * Tanimoto
     * Log (CPD)
     * Power (CPD)
 
