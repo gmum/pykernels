@@ -1,9 +1,9 @@
+![pyKernels](/doc/img/logo.png?raw=true "pyKernels")
+
 # pyKernels
 * authors: Wojciech Marian Czarnecki and Katarzyna Janocha
-* version: 0.0.2
+* version: 0.0.4
 * dependencies: numpy, scipy, scikit-learn
-
-![pyKernels](/doc/img/logo.png?raw=true "pyKernels")
 
 ## General description
 Python library for working with kernel methods in machine learning.
