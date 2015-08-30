@@ -7,6 +7,7 @@ __author__ = 'kasiajanocha'
 import itertools
 import numpy as np
 from pykernels.base import Kernel, GraphKernel
+import basic
 
 def dec2bin(k, bitlength=0):
     """Decimal to binary"""
@@ -113,8 +114,8 @@ class All34Graphlets(GraphKernel):
         self.graphlet_array = _generate_graphlets(k)
 
     def _compute(self, data_1, data_2):
-        data_1 = np.array(data_1)
-        data_2 = np.array(data_2)
+        data_1 = basic.graphs_to_adjacency_lists(data_1)
+        data_2 = basic.graphs_to_adjacency_lists(data_2)
         d1 = np.zeros((data_1.shape[0], _number_of_graphlets(self.k)))
         d2 = np.zeros((data_2.shape[0], _number_of_graphlets(self.k)))
         for i, g in enumerate(data_1):

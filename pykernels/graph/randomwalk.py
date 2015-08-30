@@ -8,6 +8,7 @@ import numpy as np
 from pykernels.base import Kernel, GraphKernel
 from scipy.sparse import lil_matrix, kron,identity
 from scipy.sparse.linalg import lsqr
+import basic
 
 def _norm(adj_mat):
     """Normalize adjacency matrix"""
@@ -28,6 +29,8 @@ class RandomWalk(GraphKernel):
 
     # either tensor of dimention 3 (list of adjacency matrices)
     def _compute(self, data_1, data_2):
+        data_1 = basic.graphs_to_adjacency_lists(data_1)
+        data_2 = basic.graphs_to_adjacency_lists(data_2)
         res = np.zeros((len(data_1), len(data_2)))
         N = len(data_1) * len(data_2)
         for i, graph1 in enumerate(data_1):
@@ -44,7 +47,6 @@ class RandomWalk(GraphKernel):
                 x = lsqr(A, starting_prob)
                 res[i, j] = stop_prob.T.dot(x[0])
                 # print float(len(data_2)*i + j)/float(N), "%"
-            print float(i)/float(len(data_1))*100, "%"
         return res
 
     def dim(self):
