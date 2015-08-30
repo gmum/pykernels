@@ -1,6 +1,5 @@
 ![pyKernels](/doc/img/logo.png?raw=true "pyKernels")
 
-# pyKernels
 * authors: Wojciech Marian Czarnecki and Katarzyna Janocha
 * version: 0.0.4
 * dependencies: numpy, scipy, scikit-learn
@@ -56,6 +55,7 @@ for binary sequences and even kernels for labeled graphs.
     * Sorensen
     * Tanimoto
     * Wavelet
+    * Fourier
     * Log (CPD)
     * Power (CPD)
 

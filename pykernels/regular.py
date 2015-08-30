@@ -256,6 +256,32 @@ class Wavelet(Kernel):
     def dim(self):
         return None
 
+
+class Fourier(Kernel):
+    """
+    Fourier kernel,
+
+        K(x, y) = PROD_i (1-q^2)/(2(1-2q cos(x_i-y_i)+q^2))
+    """
+
+    def __init__(self, q=0.1):
+        self._q = q
+
+    def _compute(self, data_1, data_2):
+
+        kernel = np.ones((data_1.shape[0], data_2.shape[0]))
+
+        for d in range(data_1.shape[1]):
+            column_1 = data_1[:, d].reshape(-1, 1)
+            column_2 = data_2[:, d].reshape(-1, 1)
+            kernel *= (1-self._q ** 2) / \
+                      (2.*(1. - 2.*self._q *np.cos(column_1 - column_2.T) + self._q ** 2))
+
+        return kernel
+
+    def dim(self):
+        return None
+
 class Tanimoto(Kernel):
     """
     Tanimoto kernel
