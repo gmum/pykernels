@@ -35,7 +35,7 @@ for binary sequences and even kernels for labeled graphs.
 
 ## implemented Kernels
 
-* Vector kernels for $R^d$
+* Vector kernels for R^d
     * Linear
     * Polynomial
     * RBF
@@ -46,8 +46,8 @@ for binary sequences and even kernels for labeled graphs.
     * Cauchy
     * T-Student
     * ANOVA
-    * Additive Chi$^2$
-    * Chi$^2$
+    * Additive Chi^2
+    * Chi^2
     * Min/Histogram intersection
     * Generalized histogram intersection
     * Spline
