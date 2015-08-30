@@ -8,7 +8,7 @@ __author__ = 'lejlot'
 from pykernels.base import Kernel
 import numpy as np
 from utils import euclidean_dist_matrix
-import warning
+import warnings
 
 class Exponential(Kernel):
     """
@@ -222,7 +222,7 @@ class AdditiveChi2(PositiveKernel):
     def _compute(self, data_1, data_2):
 
         if np.any(data_1 < 0) or np.any(data_2 < 0):
-            warning.warn('Additive Chi^2 kernel requires data to be strictly positive!')
+            warnings.warn('Additive Chi^2 kernel requires data to be strictly positive!')
 
         kernel = np.zeros((data_1.shape[0], data_2.shape[0]))
 
@@ -255,7 +255,7 @@ class Chi2(PositiveKernel):
     def _compute(self, data_1, data_2):
 
         if np.any(data_1 < 0) or np.any(data_2 < 0):
-            warning.warn('Chi^2 kernel requires data to be strictly positive!')
+            warnings.warn('Chi^2 kernel requires data to be strictly positive!')
 
         kernel = np.zeros((data_1.shape[0], data_2.shape[0]))
 
@@ -279,7 +279,7 @@ class Min(PositiveKernel):
     def _compute(self, data_1, data_2):
 
         if np.any(data_1 < 0) or np.any(data_2 < 0):
-            warning.warn('Min kernel requires data to be strictly positive!')
+            warnings.warn('Min kernel requires data to be strictly positive!')
 
         kernel = np.zeros((data_1.shape[0], data_2.shape[0]))
 
@@ -335,7 +335,7 @@ class Spline(PositiveKernel):
     def _compute(self, data_1, data_2):
 
         if np.any(data_1 < 0) or np.any(data_2 < 0):
-            warning.warn('Spline kernel requires data to be strictly positive!')
+            warnings.warn('Spline kernel requires data to be strictly positive!')
 
         kernel = np.ones((data_1.shape[0], data_2.shape[0]))
 
