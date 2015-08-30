@@ -8,7 +8,7 @@ __author__ = 'lejlot'
 from pykernels.base import Kernel
 import numpy as np
 from utils import euclidean_dist_matrix
-
+import warnings
 
 class Exponential(Kernel):
     """
@@ -83,6 +83,11 @@ class InverseMultiquadratic(Kernel):
 
     where:
         c > 0
+
+    as defined in:
+    "Interpolation of scattered data: Distance matrices and conditionally positive definite functions"
+    Charles Micchelli
+    Constructive Approximation
     """
 
     def __init__(self, c=1):
@@ -105,6 +110,11 @@ class Cauchy(Kernel):
 
     where:
         s = sigma
+
+    as defined in:
+    "A least square kernel machine with box constraints"
+    Jayanta Basak
+    International Conference on Pattern Recognition 2008
     """
 
     def __init__(self, sigma=None):
@@ -135,6 +145,12 @@ class TStudent(Kernel):
 
     where:
         d = degree
+
+    as defined in:
+    "Alternative Kernels for Image Recognition"
+    Sabri Boughorbel, Jean-Philippe Tarel, Nozha Boujemaa
+    INRIA - INRIA Activity Reports - RalyX
+    http://ralyx.inria.fr/2004/Raweb/imedia/uid84.html
     """
 
     def __init__(self, degree=2):
@@ -147,4 +163,240 @@ class TStudent(Kernel):
 
     def dim(self):
         return None
+
+
+class ANOVA(Kernel):
+    """
+    ANOVA kernel, 
+        K(x, y) = SUM_k exp( -sigma * (x_k - y_k)^2 )^d
+
+    as defined in
+
+    "Kernel methods in machine learning"
+    Thomas Hofmann, Bernhard Scholkopf and Alexander J. Smola
+    The Annals of Statistics
+    http://www.kernel-machines.org/publications/pdfs/0701907.pdf
+    """
+
+    def __init__(self, sigma=1., d=2):
+        self._sigma = sigma
+        self._d = d
+
+    def _compute(self, data_1, data_2):
+
+        kernel = np.zeros((data_1.shape[0], data_2.shape[0]))
+
+        for d in range(data_1.shape[1]):
+            column_1 = data_1[:, d].reshape(-1, 1)
+            column_2 = data_2[:, d].reshape(-1, 1)
+            kernel += np.exp( -self._sigma * (column_1 - column_2.T)**2 ) ** self._d
+
+        return kernel
+
+    def dim(self):
+        return None
+
+
+
+from abc import ABCMeta
+
+class PositiveKernel(Kernel):
+    """
+    Defines kernels which can be only used with positive values
+    """
+    __metaclass__ = ABCMeta
+
+class AdditiveChi2(PositiveKernel):
+    """
+    Additive Chi^2 kernel, 
+        K(x, y) = SUM_i 2 x_i y_i / (x_i + y_i)
+
+    as defined in
+
+    "Efficient Additive Kernels via Explicit Feature Maps"
+    Andrea Vedaldi, Andrew Zisserman
+    IEEE TRANSACTIONS ON PATTERN ANALYSIS AND MACHINE INTELLIGENCE
+    http://www.robots.ox.ac.uk/~vedaldi/assets/pubs/vedaldi11efficient.pdf
+    """
+
+    def _compute(self, data_1, data_2):
+
+        if np.any(data_1 < 0) or np.any(data_2 < 0):
+            warnings.warn('Additive Chi^2 kernel requires data to be strictly positive!')
+
+        kernel = np.zeros((data_1.shape[0], data_2.shape[0]))
+
+        for d in range(data_1.shape[1]):
+            column_1 = data_1[:, d].reshape(-1, 1)
+            column_2 = data_2[:, d].reshape(-1, 1)
+            kernel += 2 * (column_1 * column_2.T) / (column_1 + column_2.T)
+
+        return kernel
+
+    def dim(self):
+        return None
+
+class Chi2(PositiveKernel):
+    """
+    Chi^2 kernel, 
+        K(x, y) = exp( -gamma * SUM_i (x_i - y_i)^2 / (x_i + y_i) )
+
+    as defined in:
+    "Local features and kernels for classification 
+     of texture and object categories: A comprehensive study"
+    Zhang, J. and Marszalek, M. and Lazebnik, S. and Schmid, C. 
+    International Journal of Computer Vision 2007 
+    http://eprints.pascal-network.org/archive/00002309/01/Zhang06-IJCV.pdf
+    """
+
+    def __init__(self, gamma=1.):
+        self._gamma = gamma
+
+    def _compute(self, data_1, data_2):
+
+        if np.any(data_1 < 0) or np.any(data_2 < 0):
+            warnings.warn('Chi^2 kernel requires data to be strictly positive!')
+
+        kernel = np.zeros((data_1.shape[0], data_2.shape[0]))
+
+        for d in range(data_1.shape[1]):
+            column_1 = data_1[:, d].reshape(-1, 1)
+            column_2 = data_2[:, d].reshape(-1, 1)
+            kernel += (column_1 - column_2.T)**2 / (column_1 + column_2.T)
+
+        return np.exp(-self._gamma * kernel)
+
+    def dim(self):
+        return None
+
+class Min(PositiveKernel):
+    """
+    Min kernel (also known as Histogram intersection kernel)
+        K(x, y) = SUM_i min(x_i, y_i)
+
+    """
+
+    def _compute(self, data_1, data_2):
+
+        if np.any(data_1 < 0) or np.any(data_2 < 0):
+            warnings.warn('Min kernel requires data to be strictly positive!')
+
+        kernel = np.zeros((data_1.shape[0], data_2.shape[0]))
+
+        for d in range(data_1.shape[1]):
+            column_1 = data_1[:, d].reshape(-1, 1)
+            column_2 = data_2[:, d].reshape(-1, 1)
+            kernel += np.minimum(column_1, column_2.T)
+
+        return kernel
+
+    def dim(self):
+        return None
+
+
+class GeneralizedHistogramIntersection(Kernel):
+    """
+    Generalized histogram intersection kernel
+        K(x, y) = SUM_i min(|x_i|^alpha, |y_i|^alpha)
+
+    as defined in
+    "Generalized histogram intersection kernel for image recognition"
+    Sabri Boughorbel, Jean-Philippe Tarel, Nozha Boujemaa
+    International Conference on Image Processing (ICIP-2005)
+    http://perso.lcpc.fr/tarel.jean-philippe/publis/jpt-icip05.pdf
+    """
+
+    def __init__(self, alpha=1.):
+        self._alpha = alpha
+
+    def _compute(self, data_1, data_2):
+
+        return Min()._compute(np.abs(data_1)**self._alpha,
+                              np.abs(data_2)**self._alpha)
+
+    def dim(self):
+        return None
+
+class Spline(PositiveKernel):
+    """
+    Spline kernel, 
+        K(x, y) = PROD_i 1 + x_iy_i + x_iy_i min(x_i,y_i)
+                           - (x_i+y_i)/2 * min(x_i,y_i)^2
+                           + 1/3 * min(x_i, y_i)^3
+
+    as defined in
+
+    "Support Vector Machines for Classification and Regression"
+    Steve Gunn
+    ISIS Technical Report
+    http://www.svms.org/tutorials/Gunn1998.pdf
+    """
+
+    def _compute(self, data_1, data_2):
+
+        if np.any(data_1 < 0) or np.any(data_2 < 0):
+            warnings.warn('Spline kernel requires data to be strictly positive!')
+
+        kernel = np.ones((data_1.shape[0], data_2.shape[0]))
+
+        for d in range(data_1.shape[1]):
+            column_1 = data_1[:, d].reshape(-1, 1)
+            column_2 = data_2[:, d].reshape(-1, 1)
+            c_prod = column_1 * column_2.T
+            c_sum = column_1 + column_2.T
+            c_min = np.minimum(column_1, column_2.T)
+            kernel *= 1. + c_prod + c_prod * c_min \
+                         - c_sum/2. * c_min ** 2. \
+                         + 1./3. * c_min ** 3.
+        return kernel
+
+    def dim(self):
+        return None
+
+
+
+class ConditionalyPositiveDefiniteKernel(Kernel):
+    """
+    Defines kernels which are only CPD
+    """
+    __metaclass__ = ABCMeta
+
+class Log(ConditionalyPositiveDefiniteKernel):
+    """
+    Log kernel
+        K(x, y) = -log(||x-y||^d + 1)
+
+    """
+
+    def __init__(self, d=2.):
+        self._d = d
+
+    def _compute(self, data_1, data_2):
+        return -np.log(euclidean_dist_matrix(data_1, data_2) ** self._d / 2. + 1)
+
+    def dim(self):
+        return None
+
+
+class Power(ConditionalyPositiveDefiniteKernel):
+    """
+    Power kernel
+        K(x, y) = -||x-y||^d
+
+    as defined in:
+    "Scale-Invariance of Support Vector Machines based on the Triangular Kernel"
+    Hichem Sahbi, Francois Fleuret
+    Research report
+    https://hal.inria.fr/inria-00071984
+    """
+
+    def __init__(self, d=2.):
+        self._d = d
+
+    def _compute(self, data_1, data_2):
+        return - euclidean_dist_matrix(data_1, data_2) ** self._d / 2.
+
+    def dim(self):
+        return None
+
 
