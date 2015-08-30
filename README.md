@@ -3,6 +3,8 @@
 * version: 0.0.2
 * dependencies: numpy, scipy, scikit-learn
 
+![pyKernels](/doc/img/logo.png?raw=true "pyKernels")
+
 ## General description
 Python library for working with kernel methods in machine learning.
 Provided code is easy to use set of implementations of various
@@ -31,14 +33,32 @@ for binary sequences and even kernels for labeled graphs.
         print 'Accuracy:', accuracy_score(clf.predict(X), y)
         print
 
-## Bibliography
-[1] S. V. N. Vishwanathan, N. N. Schraudolph, I. R. Kondor, and K. M. Borgwardt. 
-    Graph kernels. Journal of Machine Learning Research, 11:1201-1242, 2010.
-[2] N. Shervashidze, S. V. N. Vishwanathan, T. Petri, K. Mehlhorn, and K. M. Borgwardt. 
-    Efficient graphlet kernels for large graph comparison. In Proceedings of the International 
-    Conference on Artificial Intelligence and Statistics, 2009.
-[3] K. M. Borgwardt and H.-P. Kriegel.
-    Shortest-path kernels on graphs. In Proceedings of the International Conference on Data Mining, 
-    pages 74-81, 2005.
-[4] N. Shervashidze, K. Borgwardt
-    Graph kernels. Code and Data, 2012.
+## implemented Kernels
+
+* Vector kernels for $R^d$
+    * Linear
+    * Polynomial
+    * RBF
+    * Exponential
+    * Laplacian
+    * Rational quadratic
+    * Inverse multiquadratic
+    * Cauchy
+    * T-Student
+    * ANOVA
+    * Additive Chi$^2$
+    * Chi$^2$
+    * Min/Histogram intersection
+    * Generalized histogram intersection
+    * Spline
+    * Log (CPD)
+    * Power (CPD)
+
+* Graph kernels
+    * Labeled
+        * Shortest paths
+
+    * Unlabeled
+        * Shortest paths
+        * 3,4-Graphlets
+        * Random walk
