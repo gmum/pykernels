@@ -24,7 +24,7 @@ if __name__ == "__main__":
         classifiers=[
             'Development Status :: 1 - Alpha',
             'Intended Audience ::  Machine Learning Research',
-            'License :: OSI Approved ::' + LICENSE,
+            'License :: OSI Approved ::' + license,
             'Programming Language :: Python :: 2.7',
             'Programming Language :: Python :: 3',
             'Operating System :: OS Independent',
