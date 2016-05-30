@@ -2,6 +2,8 @@
 
 import setuptools
 
+LICENSE = 'MIT'
+
 if __name__ == "__main__":
     setuptools.setup(
         name='pykernels',
@@ -12,7 +14,7 @@ if __name__ == "__main__":
         author_email='wojciech.czarnecki@uj.edu.pl',
         url='https://github.com/gmum/pykernels',
 
-        license='MIT',
+        license=LICENSE,
         packages=setuptools.find_packages(),
 
         install_requires=[
@@ -24,7 +26,7 @@ if __name__ == "__main__":
         classifiers=[
             'Development Status :: 1 - Alpha',
             'Intended Audience ::  Machine Learning Research',
-            'License :: OSI Approved ::' + license,
+            'License :: OSI Approved ::' + LICENSE,
             'Programming Language :: Python :: 2.7',
             'Programming Language :: Python :: 3',
             'Operating System :: OS Independent',
