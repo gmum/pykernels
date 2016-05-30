@@ -22,14 +22,15 @@ if __name__ == "__main__":
         ],
 
         classifiers=[
-            'Development Status :: 4 - Beta',
-            'Intended Audience :: Telecommunications Industry',
-            'Intended Audience :: Science/Research',
-            'License :: OSI Approved :: MIT License',
+            'Development Status :: 1 - Alpha',
+            'Intended Audience ::  Machine Learning Research',
+            'License :: OSI Approved ::' + LICENSE,
             'Programming Language :: Python :: 2.7',
             'Programming Language :: Python :: 3',
-            'Topic :: Multimedia :: Sound/Audio :: Analysis',
-            'Topic :: Multimedia :: Sound/Audio :: Sound Synthesis'
+            'Operating System :: OS Independent',
+            'Topic :: Software Development :: Libraries :: Python Modules',
+            'Topic :: Scientific/Engineering :: Machine Learning',
+            'Topic :: Scientific/Engineering :: Information Analysis',
         ],
 
         zip_safe=True,
