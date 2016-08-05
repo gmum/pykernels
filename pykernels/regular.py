@@ -450,9 +450,9 @@ class GeneralizedHistogramIntersection(Kernel):
 class MinMax(PositiveKernel):
     """
     MinMax kernel
-        K(x, y) = SUM_i min(x_i, y_i) / max(x_i, y_i)
+        K(x, y) = SUM_i min(x_i, y_i) / SUM_i max(x_i, y_i)
 
-    as defined in:
+    bounded by [0,1] as defined in:
 
     "Graph Kernels for Chemical Informatics"
     Liva Ralaivola, Sanjay J. Swamidass, Hiroto Saigo and Pierre Baldi
@@ -465,14 +465,16 @@ class MinMax(PositiveKernel):
         if np.any(data_1 < 0) or np.any(data_2 < 0):
             warnings.warn('MinMax kernel requires data to be strictly positive!')
 
-        kernel = np.zeros((data_1.shape[0], data_2.shape[0]))
+        minkernel = np.zeros((data_1.shape[0], data_2.shape[0]))
+        maxkernel = np.zeros((data_1.shape[0], data_2.shape[0]))
 
         for d in range(data_1.shape[1]):
             column_1 = data_1[:, d].reshape(-1, 1)
             column_2 = data_2[:, d].reshape(-1, 1)
-            kernel += np.minimum(column_1, column_2.T) / np.maximum(column_1, column_2.T)
+            minkernel += np.minimum(column_1, column_2.T) 
+            maxkernel += np.maximum(column_1, column_2.T)
 
-        return kernel
+        return minkernel/maxkernel
 
     def dim(self):
         return None
